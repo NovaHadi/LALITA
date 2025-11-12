@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Catalog</title>
+    <title>Interactive Catalog (Google Drive)</title>
     <link rel="icon" type="image/x-icon" href="https://lh3.googleusercontent.com/pw/AP1GczPGhK4Bsqs7ATtNxHUJDaRYq39w8kJLQ9NgoMGaXgKSHpm9-kXo7yC68x3FTU5Ip7pPXzTAd7LPcSUVLukGYOOkCmrKMvGeirpwr-a7OVRQMIBuA1yF89Kk0n6LGDH48CUuF8dqEWsXNfyuvalLVefP=w913-h913-s-no-gm?authuser=0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google API Client Library -->
+    <script src="https://apis.google.com/js/api.js"></script>
     <style>
         /* Set a smooth dark theme with the Inter font */
         html {
@@ -89,17 +91,14 @@
     <div class="flex h-screen pt-16"> 
 
         <div id="sidebar" class="w-1/4 h-full bg-gray-900 border-r border-gray-700 p-6 overflow-y-auto custom-scrollbar shadow-2xl">
-            <h2 class="text-2xl font-extrabold text-teal-400 mb-6 border-b border-teal-600 pb-2" id="sidebar-title">📂 Muat Model</h2>
+            <h2 class="text-2xl font-extrabold text-teal-400 mb-6 border-b border-teal-600 pb-2" id="sidebar-title">📂 Daftar Model</h2>
             
-            <button id="folder-picker-button" class="w-full p-3 mb-6 bg-teal-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-[1.02]">
-                Pilih Folder Model...
-            </button>
-            <input type="file" id="folder-input" webkitdirectory directory multiple class="hidden" />
+            <!-- Tombol folder-picker-button dan input folder-input dihapus -->
 
             <p class="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider" id="files-found-label">File Ditemukan:</p>
             
             <ul id="file-list" class="space-y-2">
-                <li class="text-gray-500 text-sm italic p-2" id="file-list-placeholder">Pilih folder untuk memuat file .obj.</li>
+                <li class="text-gray-500 text-sm italic p-2" id="file-list-placeholder">Mengambil data dari Google Drive...</li>
             </ul>
         </div>
 
@@ -159,24 +158,26 @@ Silakan muat file .obj dari daftar di kiri.
         import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
         import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'; 
 
+        // --- KONFIGURASI GOOGLE DRIVE ---
+        // !!! PENTING: Ganti dengan API Key Anda !!!
+        const API_KEY = 'AIzaSyBxGawynVXWOkPliGbuG9blk8kO73cfF8I'; 
+        // ID Folder Google Drive yang akan di-load
+        const FOLDER_ID = '1LiuZZW-UbjBj1DPHrJV3PsF7pjKAgmiY';
+
+
         // --- GLOBAL UI STRINGS (Multilingual Support) ---
         const UI_STRINGS = {
             id: {
                 appTitle: "INTERACTIVE CATALOG",
                 loginButton: "Masuk / Daftar",
-                sidebarTitle: "📂 Muat Model",
+                sidebarTitle: "📂 Daftar Model", // Diubah
                 folderButton: "Pilih Folder Model...",
                 filesFoundLabel: "File Ditemukan:",
                 fileListPlaceholder: "Pilih folder untuk memuat file .obj.",
-                viewModeLabel: "Pilih Mode Tampilan",
-                optDetail: "Detail (Warna Normal)",
-                optShaded: "Shaded (Pencahayaan)",
-                optOriginal: "Original (Tekstur/MTL)",
-                meshViewLabel: "Tampilan Mesh",
-                optSolid: "Permukaan Padat",
-                optWireframe: "Tampilkan Wireframe",
-                detailHeader: "📊 Detail Objek",
-                descPlaceholder: "Silakan muat file .obj dari daftar di kiri.",
+                // Status Google Drive
+                gdriveLoading: "Mengambil data dari Google Drive...",
+                gdriveError: (err) => `Error Google Drive: ${err.message}. Pastikan API Key valid dan folder dapat diakses.`,
+                gdriveNoFiles: "Tidak ada file .obj ditemukan di folder Google Drive.",
                 // Status Messages
                 loading: (fileName) => `Memuat "${fileName}"...`,
                 loadingText: (fileName) => `Memuat "${fileName}" dan teks pendamping...`,
@@ -185,6 +186,7 @@ Silakan muat file .obj dari daftar di kiri.
                 errorReadTxt: (fileName) => `[Peringatan: Gagal memuat file TXT pendamping: ${fileName}]`,
                 errorLoadTxt: (fileName) => `[Peringatan: Terjadi kesalahan saat memuat file TXT pendamping: ${fileName}]`,
                 errorLoadObj: (fileName) => `Error: Gagal memuat file ${fileName}.`,
+                errorFetch: (fileName, status) => `Error: Gagal mengambil file ${fileName} dari Google Drive. Status: ${status}`,
                 errorParseObj: "Error: Gagal memuat atau parse .obj file. Periksa konsol untuk detail.",
                 noModelLoaded: "Tidak ada model yang dimuat.",
                 detailModeApplied: "Mode Tampilan: Detail (Normal) diterapkan.",
@@ -210,19 +212,14 @@ Silakan muat file .obj dari daftar di kiri.
             en: {
                 appTitle: "INTERACTIVE CATALOG",
                 loginButton: "Login / Register",
-                sidebarTitle: "📂 Load Model",
+                sidebarTitle: "📂 Model List", // Changed
                 folderButton: "Select Model Folder...",
                 filesFoundLabel: "Files Found:",
                 fileListPlaceholder: "Select a folder to load .obj files.",
-                viewModeLabel: "Select View Mode",
-                optDetail: "Detail (Normal Color)",
-                optShaded: "Shaded (Lighting)",
-                optOriginal: "Original (Texture/MTL)",
-                meshViewLabel: "Mesh View",
-                optSolid: "Solid Surface",
-                optWireframe: "Show Wireframe",
-                detailHeader: "📊 Object Details",
-                descPlaceholder: "Please load an .obj file from the list on the left.",
+                // Google Drive Status
+                gdriveLoading: "Loading from Google Drive...",
+                gdriveError: (err) => `Google Drive Error: ${err.message}. Ensure API Key is valid and folder is accessible.`,
+                gdriveNoFiles: "No .obj files found in the Google Drive folder.",
                 // Status Messages
                 loading: (fileName) => `Loading "${fileName}"...`,
                 loadingText: (fileName) => `Loading "${fileName}" and companion text...`,
@@ -231,6 +228,7 @@ Silakan muat file .obj dari daftar di kiri.
                 errorReadTxt: (fileName) => `[Warning: Failed to read companion TXT file: ${fileName}]`,
                 errorLoadTxt: (fileName) => `[Warning: Error loading companion TXT file: ${fileName}]`,
                 errorLoadObj: (fileName) => `Error: Failed to load file ${fileName}.`,
+                errorFetch: (fileName, status) => `Error: Failed to fetch file ${fileName} from Google Drive. Status: ${status}`,
                 errorParseObj: "Error: Failed to load or parse .obj file. Check console for details.",
                 noModelLoaded: "No model is currently loaded.",
                 detailModeApplied: "View Mode: Detail (Normal) applied.",
@@ -263,12 +261,13 @@ Silakan muat file .obj dari daftar di kiri.
         const canvasContainer = document.getElementById('canvas-container');
         const descriptionEl = document.getElementById('object-description');
         const fileListEl = document.getElementById('file-list');
-        const folderPickerButton = document.getElementById('folder-picker-button');
-        const folderInput = document.getElementById('folder-input');
         const viewStatusMessageEl = document.getElementById('view-status-message');
         const languageSelect = document.getElementById('language-select');
+        const fileListPlaceholderEl = document.getElementById('file-list-placeholder');
 
-        // Map untuk menyimpan objek File pasangan (.obj, .txt, .mtl) yang dipilih dari folder
+        // Map untuk menyimpan objek File Google Drive (.obj, .txt, .mtl, .tex)
+        // Strukturnya: Map<string, {objFile, txtFile, mtlFile, texFile}>
+        // Di mana value adalah objek dari Google Drive API {id, name, webContentLink}
         let loadedFileObjects = new Map();
         
         // Variabel global untuk menyimpan material yang dimuat
@@ -299,12 +298,23 @@ Silakan muat file .obj dari daftar di kiri.
 
             // 2. Sidebar
             document.getElementById('sidebar-title').textContent = strings.sidebarTitle;
-            document.getElementById('folder-picker-button').textContent = strings.folderButton;
             document.getElementById('files-found-label').textContent = strings.filesFoundLabel;
+            
             // Hanya perbarui placeholder jika daftar file kosong
-            if (loadedFileObjects.size === 0) {
-                document.getElementById('file-list-placeholder').textContent = strings.fileListPlaceholder;
+            // Periksa apakah placeholder masih menampilkan pesan loading/error gdrive
+            if (fileListPlaceholderEl && fileListPlaceholderEl.dataset.gdriveStatus) {
+                // Jika masih loading/error, update teks placeholder sesuai bahasa
+                const status = fileListPlaceholderEl.dataset.gdriveStatus;
+                if (status === 'loading') {
+                    fileListPlaceholderEl.textContent = strings.gdriveLoading;
+                } else if (status === 'empty') {
+                    fileListPlaceholderEl.textContent = strings.gdriveNoFiles;
+                }
+                // Jika error, biarkan pesan error asli
+            } else if (loadedFileObjects.size === 0) {
+                 fileListPlaceholderEl.textContent = strings.fileListPlaceholder;
             }
+
 
             // 3. Main Content / Header
             document.getElementById('main-header-title').textContent = lang === 'id' ? "LALITA Interactive Catalog" : "LALITA Interactive Catalog"; // Judul ini tetap EN
@@ -331,21 +341,14 @@ Silakan muat file .obj dari daftar di kiri.
                 updateDescription(loadedObject, loadedObject.name, loadedObject.descriptionText, null, loadedObject.textureDataURL);
             }
             
-            // 7. Re-render file list indicators if list is populated
-            //    *** INI ADALAH PERBAIKAN ***
-            //    Kita cek 'loadedFileObjects.size' alih-alih 'folderInput.files.length'
-            //    karena 'folderInput.files' mungkin sudah kosong.
-            //    'loadedFileObjects' adalah sumber data yang sebenarnya.
+            // 7. Re-render file list indicators
             if (loadedFileObjects.size > 0) {
-                // Panggil handleFolderSelection lagi untuk meregenerasi item list dengan indikator baru
-                // Kita tidak perlu event 'files' lagi, karena data sudah ada di loadedFileObjects
-                // Cukup teruskan 'null' untuk event dan set isUpdateOnly ke true.
-                handleFolderSelection(null, true); // true = update only
+                renderFileList();
             }
         }
 
 
-        function init() {
+        async function init() {
             // Set initial language
             updateUI(languageSelect.value);
 
@@ -384,15 +387,10 @@ Silakan muat file .obj dari daftar di kiri.
             // --- Event Listeners ---
             window.addEventListener('resize', onWindowResize);
             
-            // Listener untuk tombol "Pilih Folder" (dapat obj dan txt)
-            folderPickerButton.addEventListener('click', () => folderInput.click());
-            // Gunakan `!isUpdateOnly` di handleFolderSelection
-            folderInput.addEventListener('change', (e) => handleFolderSelection(e)); 
-            
             // Listener untuk tombol bahasa
             languageSelect.addEventListener('change', (e) => updateUI(e.target.value));
 
-            // Listener untuk daftar file sampel di sidebar
+            // Listener untuk daftar file (sekarang dari Google Drive)
             fileListEl.addEventListener('click', (event) => {
                 const button = event.target.closest('.file-item-button');
                 const fileKey = button?.dataset.fileKey; 
@@ -405,12 +403,14 @@ Silakan muat file .obj dari daftar di kiri.
                     // Nonaktifkan tombol lain saat memuat
                     document.querySelectorAll('.file-item-button').forEach(btn => btn.disabled = true);
                     
-                    // Muat model dan deskripsi dari File objects
+                    // Muat model dan deskripsi dari URL Google Drive
                     loadObjectAndDescription(filePairToLoad.objFile, filePairToLoad.txtFile, filePairToLoad.mtlFile, filePairToLoad.texFile) // Pass texFile
                         .catch(err => {
                             const strings = UI_STRINGS[currentLang];
                             console.error(strings.errorLoadObj(filePairToLoad.objFile.name), err);
-                            updateDescription(null, null, null, strings.errorLoadObj(filePairToLoad.objFile.name));
+                            // Tampilkan error fetch jika ada
+                            const errorMsg = err.message.includes('fetch') ? err.message : strings.errorLoadObj(filePairToLoad.objFile.name);
+                            updateDescription(null, null, null, errorMsg);
                         })
                         .finally(() => {
                             document.querySelectorAll('.file-item-button').forEach(btn => btn.disabled = false);
@@ -425,6 +425,16 @@ Silakan muat file .obj dari daftar di kiri.
 
             // --- Start Animation Loop ---
             animate();
+
+            // --- Mulai memuat file dari Google Drive ---
+            if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE') {
+                console.error("API_KEY tidak diatur. Silakan edit file HTML dan atur API_KEY.");
+                fileListPlaceholderEl.textContent = "Error: API_KEY tidak diatur.";
+                fileListPlaceholderEl.classList.add("text-red-500");
+                fileListPlaceholderEl.dataset.gdriveStatus = 'error';
+                return;
+            }
+            loadGoogleDriveFiles();
         }
 
         function animate() {
@@ -472,67 +482,95 @@ Silakan muat file .obj dari daftar di kiri.
             }, duration);
         }
 
-        // --- Fungsi: Menangani Pemilihan Folder dan Pencarian Pasangan File ---
-        function handleFolderSelection(event, isUpdateOnly = false) {
+        // --- Fungsi: Memuat file dari Google Drive ---
+        async function loadGoogleDriveFiles() {
             const strings = UI_STRINGS[currentLang];
+            fileListPlaceholderEl.textContent = strings.gdriveLoading;
+            fileListPlaceholderEl.dataset.gdriveStatus = 'loading';
 
-            // Hanya bersihkan dan re-populate loadedFileObjects jika bukan update bahasa
-            if (!isUpdateOnly) {
-                const files = event.target.files;
-                if (!files || files.length === 0) return;
+            try {
+                // 1. Load GAPI client
+                await new Promise((resolve, reject) => gapi.load('client', { callback: resolve, onerror: reject }));
 
-                fileListEl.innerHTML = '';
-                loadedFileObjects.clear();
-                displayStatusMessage('', 'info', 0);
-
-                const fileMap = new Map(); // Temp map to store all files by key for easy pairing
-
-                // Map semua file berdasarkan path/nama dasar
-                Array.from(files).forEach(file => {
-                    const key = file.webkitRelativePath || file.name;
-                    fileMap.set(key, file);
+                // 2. Initialize GAPI client
+                await gapi.client.init({
+                    'apiKey': API_KEY,
+                    'discoveryDocs': ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
                 });
 
-                // Cari pasangan OBJ/TXT/MTL/Tekstur
-                const objFilesToDisplay = [];
+                // 3. List files from the folder
+                const response = await gapi.client.drive.files.list({
+                    q: `'${FOLDER_ID}' in parents and trashed=false`,
+                    // Minta webContentLink untuk mengunduh file
+                    fields: 'files(id, name, webContentLink, fileExtension)',
+                    pageSize: 500 // Asumsi file di bawah 500
+                });
 
-                fileMap.forEach((file, key) => {
-                    const lowerKey = key.toLowerCase();
-                    
-                    if (lowerKey.endsWith('.obj')) {
-                        // Cari file pendamping berdasarkan nama dasar
-                        const baseName = key.slice(0, -4); // Remove .obj
-                        const txtKey = baseName + '.txt';
-                        const mtlKey = baseName + '.mtl';
-                        // Cari .jpg ATAU .png
-                        const jpgKey = baseName + '.jpg';
-                        const pngKey = baseName + '.png';
+                const files = response.result.files;
+                if (!files || files.length === 0) {
+                    fileListPlaceholderEl.textContent = strings.gdriveNoFiles;
+                    fileListPlaceholderEl.dataset.gdriveStatus = 'empty';
+                    return;
+                }
 
-                        const txtFile = fileMap.get(txtKey) || null;
-                        const mtlFile = fileMap.get(mtlKey) || null;
-                        const texFile = fileMap.get(jpgKey) || fileMap.get(pngKey) || null; // Ambil file tekstur
+                // 4. Proses dan pasangkan file (OBJ, TXT, MTL, Tekstur)
+                const fileMap = new Map(); // Peta: nama file -> objek file GDrive
+                files.forEach(file => {
+                    fileMap.set(file.name, file);
+                });
 
-                        loadedFileObjects.set(key, { 
-                            objFile: file, 
+                loadedFileObjects.clear(); // Bersihkan map global
+
+                fileMap.forEach((file) => {
+                    if (file.fileExtension && file.fileExtension.toLowerCase() === 'obj') {
+                        const baseName = file.name.slice(0, -4); // Hapus .obj
+                        
+                        const txtFile = fileMap.get(baseName + '.txt') || null;
+                        const mtlFile = fileMap.get(baseName + '.mtl') || null;
+                        const texFile = fileMap.get(baseName + '.jpg') || fileMap.get(baseName + '.png') || null;
+
+                        loadedFileObjects.set(file.name, {
+                            objFile: file, // {id, name, webContentLink, ...}
                             txtFile: txtFile,
                             mtlFile: mtlFile,
-                            texFile: texFile // Simpan file tekstur
+                            texFile: texFile
                         });
-                        objFilesToDisplay.push(key);
                     }
                 });
 
-                // Jika bukan update, dan tidak ada file, tampilkan placeholder
-                if (objFilesToDisplay.length === 0) {
-                    fileListEl.innerHTML = `<li class="text-gray-500 text-sm italic p-2" id="file-list-placeholder">${strings.fileListPlaceholder}</li>`;
-                    return;
+                // 5. Render daftar file ke sidebar
+                if (loadedFileObjects.size === 0) {
+                     fileListPlaceholderEl.textContent = strings.gdriveNoFiles;
+                     fileListPlaceholderEl.dataset.gdriveStatus = 'empty';
+                } else {
+                    renderFileList();
                 }
+
+            } catch (err) {
+                console.error("Gagal memuat file Google Drive:", err);
+                const errorResult = err.result || { error: { message: err.message } };
+                fileListPlaceholderEl.textContent = strings.gdriveError(errorResult.error);
+                fileListPlaceholderEl.classList.add("text-red-500");
+                fileListPlaceholderEl.dataset.gdriveStatus = 'error';
+            }
+        }
+
+
+        // --- Fungsi: Merender Daftar File ke Sidebar ---
+        // (Sebelumnya handleFolderSelection)
+        function renderFileList() {
+            const strings = UI_STRINGS[currentLang];
+
+            fileListEl.innerHTML = ''; // Bersihkan list
+            
+            // Hapus placeholder jika ada
+            if (fileListPlaceholderEl) {
+                fileListPlaceholderEl.remove();
+                // Setel ulang referensi agar tidak error jika updateUI dipanggil lagi
+                // fileListPlaceholderEl = null; 
+                // Biarkan saja, updateUI akan menangani
             }
 
-
-            // --- REGENERATE LIST ITEMS (for initial load OR language update) ---
-            // 'strings' akan menjadi bahasa yang baru jika 'isUpdateOnly' adalah true
-            fileListEl.innerHTML = ''; // Clear the list before repopulating
             const objKeys = Array.from(loadedFileObjects.keys()).sort((a, b) => a.localeCompare(b));
 
             objKeys.forEach(key => {
@@ -561,51 +599,50 @@ Silakan muat file .obj dari daftar di kiri.
             });
         }
         
-        // --- Fungsi: Memuat Model OBJ dan File TXT/MTL/Tekstur ---
+        // --- Fungsi: Memuat Model OBJ dan File TXT/MTL/Tekstur dari URL ---
+        // Versi ini menggunakan fetch() untuk mengambil data dari webContentLink GDrive
         async function loadObjectAndDescription(objFile, txtFile = null, mtlFile = null, texFile = null) {
             // Clear status message
             displayStatusMessage('', 'info', 0);
             const strings = UI_STRINGS[currentLang];
-
-            // 1. Baca OBJ File
+            
+            // 1. Ambil OBJ File
             updateDescription(null, null, null, strings.loading(objFile.name));
-            const objContent = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = (e) => reject(new Error(`Failed to read OBJ file: ${objFile.name}`));
-                reader.readAsText(objFile);
-            });
+            let objContent;
+            try {
+                const response = await fetch(objFile.webContentLink);
+                if (!response.ok) {
+                    throw new Error(strings.errorFetch(objFile.name, response.status));
+                }
+                objContent = await response.text();
+            } catch (e) {
+                console.error(e);
+                updateDescription(null, null, null, e.message);
+                return; // Berhenti jika OBJ gagal dimuat
+            }
 
-            // 2. Baca TXT File (Jika ada)
+            // 2. Ambil TXT File (Jika ada)
             let txtContent = null;
             if (txtFile) {
                 try {
                     updateDescription(null, null, null, strings.loadingText(objFile.name));
-                    txtContent = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.onerror = (e) => {
-                            console.warn(`Could not read companion TXT file: ${txtFile.name}`);
-                            resolve(strings.errorReadTxt(txtFile.name));
-                        };
-                        reader.readAsText(txtFile);
-                    });
+                    const response = await fetch(txtFile.webContentLink);
+                    if (!response.ok) throw new Error(); // Gagal diam-diam
+                    txtContent = await response.text();
                 } catch (error) {
-                    txtContent = strings.errorLoadTxt(txtFile.name);
+                    console.warn(`Could not fetch companion TXT file: ${txtFile.name}`);
+                    txtContent = strings.errorReadTxt(txtFile.name);
                 }
             }
 
-            // 3. Baca MTL File (Jika ada)
+            // 3. Ambil MTL File (Jika ada)
             let loadedMtlMaterials = null;
             if (mtlFile) {
                 updateDescription(null, null, null, strings.loadingMtl(objFile.name));
                 try {
-                    const mtlContent = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result);
-                        reader.onerror = (e) => reject(new Error(`Failed to read MTL file: ${mtlFile.name}`));
-                        reader.readAsText(mtlFile);
-                    });
+                    const response = await fetch(mtlFile.webContentLink);
+                    if (!response.ok) throw new Error(strings.errorFetch(mtlFile.name, response.status));
+                    const mtlContent = await response.text();
 
                     // Parse MTL content
                     const mtlLoader = new MTLLoader();
@@ -613,23 +650,24 @@ Silakan muat file .obj dari daftar di kiri.
                     loadedMtlMaterials.preload();
 
                 } catch (error) {
-                    console.error(`Gagal memuat atau parse MTL file: ${mtlFile.name}`, error);
+                    console.error(`Gagal mengambil atau parse MTL file: ${mtlFile.name}`, error);
                 }
             }
 
-            // 4. Baca Tekstur File (Jika ada)
-            let textureDataURL = null;
+            // 4. Ambil Tekstur File (Jika ada)
+            let textureDataURL = null; // Ini akan menjadi Blob URL
             if (texFile) {
-                updateDescription(null, null, null, strings.loadingTexture(objFile.name));
+                updateDescription(null, null, null, strings.loadingTexture(texFile.name));
                 try {
-                    textureDataURL = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => resolve(e.target.result); // Baca sebagai Data URL
-                        reader.onerror = (e) => reject(new Error(`Failed to read Texture file: ${texFile.name}`));
-                        reader.readAsDataURL(texFile); // Penting: readAsDataURL
-                    });
+                    const response = await fetch(texFile.webContentLink);
+                    if (!response.ok) throw new Error(strings.errorFetch(texFile.name, response.status));
+                    
+                    const textureBlob = await response.blob();
+                    // Buat Blob URL agar TextureLoader bisa membacanya
+                    textureDataURL = URL.createObjectURL(textureBlob);
+
                 } catch (error) {
-                    console.error(`Gagal memuat atau parse Texture file: ${texFile.name}`, error);
+                    console.error(`Gagal mengambil atau parse Texture file: ${texFile.name}`, error);
                 }
             }
             
@@ -641,8 +679,12 @@ Silakan muat file .obj dari daftar di kiri.
         function parseObj(text, fileName, descriptionText = null, materials = null, textureDataURL = null) {
             const strings = UI_STRINGS[currentLang];
             try {
-                // Remove previously loaded object
+                // Hapus objek yang dimuat sebelumnya (jika ada)
                 if (loadedObject) {
+                    // Jika objek sebelumnya menggunakan Blob URL, hapus
+                    if (loadedObject.textureDataURL && loadedObject.textureDataURL.startsWith('blob:')) {
+                        URL.revokeObjectURL(loadedObject.textureDataURL);
+                    }
                     scene.remove(loadedObject);
                 }
 
@@ -653,9 +695,10 @@ Silakan muat file .obj dari daftar di kiri.
                 customTexture = null;
                 customTexturedMaterial = null;
 
-                // Buat material tekstur kustom jika data URL ada
+                // Buat material tekstur kustom jika data URL (Blob URL) ada
                 if (textureDataURL) {
                     try {
+                        // TextureLoader dapat menangani Blob URL
                         const texture = new THREE.TextureLoader().load(textureDataURL);
                         texture.colorSpace = THREE.SRGBColorSpace; // Warna yang benar
                         texture.wrapS = THREE.RepeatWrapping;
@@ -668,6 +711,8 @@ Silakan muat file .obj dari daftar di kiri.
                         });
                     } catch (e) {
                         console.error("Gagal membuat material tekstur:", e);
+                        // Jika gagal, hapus Blob URL
+                        URL.revokeObjectURL(textureDataURL);
                         textureDataURL = null; // Hapus data jika gagal
                     }
                 }
@@ -681,7 +726,8 @@ Silakan muat file .obj dari daftar di kiri.
                 // Tambahkan metadata bahasa ke objek yang dimuat
                 loadedObject.name = fileName; 
                 loadedObject.descriptionText = descriptionText;
-                loadedObject.textureDataURL = textureDataURL;
+                // Simpan Blob URL agar bisa di-revoke nanti
+                loadedObject.textureDataURL = textureDataURL; 
 
                 // --- Center and Scale the Object ---
                 const box = new THREE.Box3().setFromObject(loadedObject);
@@ -853,6 +899,7 @@ Silakan muat file .obj dari daftar di kiri.
             // Status MTL dan Tekstur ditambahkan ke deskripsi
             // 'originalMaterials' dan 'textureDataURL' (dari loadedObject) adalah sumber data yang benar
             const mtlStatus = originalMaterials ? strings.statusYesMtl : strings.statusNoMtl;
+            // 'textureDataURL' sekarang adalah Blob URL, tapi kita hanya perlu cek keberadaannya
             const texStatus = textureDataURL ? strings.statusYesTex : strings.statusNoTex;
 
 
