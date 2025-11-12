@@ -610,7 +610,9 @@ Silakan muat file .obj dari daftar di kiri.
             updateDescription(null, null, null, strings.loading(objFile.name));
             let objContent;
             try {
-                const response = await fetch(objFile.webContentLink);
+                // PERBAIKAN: Gunakan file ID dan alt=media untuk download langsung
+                const objUrl = `https://www.googleapis.com/drive/v3/files/${objFile.id}?alt=media&key=${API_KEY}`;
+                const response = await fetch(objUrl);
                 if (!response.ok) {
                     throw new Error(strings.errorFetch(objFile.name, response.status));
                 }
@@ -626,7 +628,9 @@ Silakan muat file .obj dari daftar di kiri.
             if (txtFile) {
                 try {
                     updateDescription(null, null, null, strings.loadingText(objFile.name));
-                    const response = await fetch(txtFile.webContentLink);
+                    // PERBAIKAN: Gunakan file ID dan alt=media untuk download langsung
+                    const txtUrl = `https://www.googleapis.com/drive/v3/files/${txtFile.id}?alt=media&key=${API_KEY}`;
+                    const response = await fetch(txtUrl);
                     if (!response.ok) throw new Error(); // Gagal diam-diam
                     txtContent = await response.text();
                 } catch (error) {
@@ -640,7 +644,9 @@ Silakan muat file .obj dari daftar di kiri.
             if (mtlFile) {
                 updateDescription(null, null, null, strings.loadingMtl(objFile.name));
                 try {
-                    const response = await fetch(mtlFile.webContentLink);
+                    // PERBAIKAN: Gunakan file ID dan alt=media untuk download langsung
+                    const mtlUrl = `https://www.googleapis.com/drive/v3/files/${mtlFile.id}?alt=media&key=${API_KEY}`;
+                    const response = await fetch(mtlUrl);
                     if (!response.ok) throw new Error(strings.errorFetch(mtlFile.name, response.status));
                     const mtlContent = await response.text();
 
@@ -659,7 +665,9 @@ Silakan muat file .obj dari daftar di kiri.
             if (texFile) {
                 updateDescription(null, null, null, strings.loadingTexture(texFile.name));
                 try {
-                    const response = await fetch(texFile.webContentLink);
+                    // PERBAIKAN: Gunakan file ID dan alt=media untuk download langsung
+                    const texUrl = `https://www.googleapis.com/drive/v3/files/${texFile.id}?alt=media&key=${API_KEY}`;
+                    const response = await fetch(texUrl);
                     if (!response.ok) throw new Error(strings.errorFetch(texFile.name, response.status));
                     
                     const textureBlob = await response.blob();
