@@ -291,6 +291,11 @@ Silakan muat file .obj dari daftar di kiri.
         function updateUI(lang) {
             currentLang = lang;
             const strings = UI_STRINGS[lang];
+
+            // --- TAMBAHKAN DUA BARIS INI ---
+            console.log("DEBUG: String object yang dimuat untuk bahasa '" + lang + "':");
+            console.log(strings);
+            // ---------------------------------
             
             // 1. Header dan Tombol
             document.getElementById('app-title-text').textContent = strings.appTitle;
