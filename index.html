@@ -444,7 +444,7 @@ Silakan muat file .obj dari daftar di kiri.
             animate();
 
             // --- Mulai memuat file dari Google Drive ---
-            if (!API_KEY || API_KEY === 'AIzaSyBxGawynVXWOkPliGbuG9blk8kO73cfF8I') {
+            if (!API_KEY || API_KEY != 'AIzaSyBxGawynVXWOkPliGbuG9blk8kO73cfF8I') {
                 console.error("API_KEY tidak diatur dengan benar. Silakan edit file HTML.");
                 fileListPlaceholderEl.textContent = "Error: API_KEY tidak diatur.";
                 fileListPlaceholderEl.classList.add("text-red-500");
