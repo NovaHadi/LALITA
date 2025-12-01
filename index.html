@@ -3,43 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Catalog (Google Drive)</title>
-    <!-- Placeholder Icon URL -->
-    <link rel="icon" type="image/x-icon" href="https://lh3.googleusercontent.com/pw/AP1GczPGhK4Bsqs7ATtNxHUJDaRYq39w8kJLQ9NgoMGaXgKSHpm9-kXo7yC68x3FTU5Ip7pPXtTAd7LPcSUVLukGYOOkCmrKMvGeirpwr-a7OVRQMIBuA1yF89Kk0n6LGDH48CUuF8dqEWsXNfyuvalLVefP=w913-h913-s-no-gm?authuser=0">
+    <title>Interactive Catalog (Dataverse RIN)</title>
+    <link rel="icon" type="image/x-icon" href="https://lh3.googleusercontent.com/pw/AP1GczPGhK4Bsqs7ATtNxHUJDaRYq39w8kJLQ9NgoMGaXgKSHpm9-kXo7yC68x3FTU5Ip7pPXzTAd7LPcSUVLukGYOOkCmrKMvGeirpwr-a7OVRQMIBuA1yF89Kk0n6LGDH48CUuF8dqEWsXNfyuvalLVefP=w913-h913-s-no-gm?authuser=0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google API Client Library -->
-    <script src="https://apis.google.com/js/api.js"></script>
     <style>
-        /* Set a smooth dark theme with the Inter font */
-        html {
-            font-family: 'Inter', sans-serif;
-        }
-        body {
-            /* Smooth dark background */
-            background-color: #1f2937; /* Gray-800 */
-            overflow: hidden; 
-        }
-        /* Ensure the canvas fills its container */
-        #canvas-container canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        /* Custom scrollbar styling (optional, but nice) */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #374151; /* Gray-700 */
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #6b7280; /* Gray-500 */
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af; /* Gray-400 */
-        }
-        /* Style untuk dropdown bahasa (menggunakan SVG panah putih) */
+        html { font-family: 'Inter', sans-serif; }
+        body { background-color: #1f2937; overflow: hidden; }
+        #canvas-container canvas { width: 100%; height: 100%; display: block; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #374151; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #6b7280; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
         .custom-select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3e%3cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -47,10 +21,7 @@
             background-size: 0.8rem 0.8rem;
         }
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-
     <script type="importmap">
     {
         "imports": {
@@ -62,8 +33,7 @@
 </head>
 <body class="text-gray-100">
     
-    <header id="fixed-top-bar" class="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-teal-600 shadow-xl p-3 flex justify-between items-center transition-all duration-300">
-        
+    <header class="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-sm border-b border-teal-600 shadow-xl p-3 flex justify-between items-center">
         <div class="flex items-center space-x-3">
             <img 
                 src="https://lh3.googleusercontent.com/pw/AP1GczOY8wBgYwKIgw1IyC33cSInSjXZD8NdhN6esC7V3VJeEFP0RAS5eoB4jW3tdETF7gwqf-F156o9ANqIs1QWsFRIk34xWwkb510o3iQKhvXc7ZJgG0ClaA7tkjO4XKIZfC3QX9Ml846yPgyoHEqaT4t7=w913-h913-s-no-gm?authuser=0" 
@@ -72,45 +42,38 @@
             > 
             <h1 id="app-title-text" class="text-xl font-extrabold text-white-400 hidden sm:block tracking-wider">INTERACTIVE CATALOG</h1>
         </div>
-        
         <div class="flex space-x-3 items-center">
-            
             <div class="relative">
                 <select id="language-select" class="custom-select w-full p-2 bg-gray-700 border border-gray-600 text-white rounded-xl shadow-md focus:ring-teal-500 focus:border-teal-500 transition-colors pr-10 appearance-none cursor-pointer text-sm font-medium">
                     <option value="id" selected>🇮🇩 Bahasa</option>
                     <option value="en">🇬🇧 English</option>
                 </select>
-                </div>
-            
-            <button id="login-button" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 px-4 rounded-xl shadow-md transition-all duration-200 text-sm transform hover:scale-[1.05]">
-                Masuk / Daftar
+            </div>
+            <button id="login-button" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 px-4 rounded-xl shadow-md transition-all duration-200 text-sm">
+                login
             </button>
         </div>
     </header>
 
-
     <div class="flex h-screen pt-16"> 
-
         <div id="sidebar" class="w-1/4 h-full bg-gray-900 border-r border-gray-700 p-6 overflow-y-auto custom-scrollbar shadow-2xl">
             <h2 class="text-2xl font-extrabold text-teal-400 mb-6 border-b border-teal-600 pb-2" id="sidebar-title">📂 Daftar Model</h2>
-            
             <p class="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider" id="files-found-label">File Ditemukan:</p>
-            
             <ul id="file-list" class="space-y-2">
-                <li class="text-gray-500 text-sm italic p-2" id="file-list-placeholder" data-gdrive-status="loading">Mengambil data dari Google Drive...</li>
+                <li class="text-gray-500 text-sm italic p-2" id="file-list-placeholder" data-status="loading">Mengambil data dari Dataverse...</li>
             </ul>
         </div>
 
         <div id="main-content" class="w-3/4 h-full overflow-y-auto custom-scrollbar">
             <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-                
                 <header class="relative mb-8 p-8 bg-gradient-to-r from-gray-700 to-gray-900 rounded-2xl shadow-2xl overflow-hidden">
                     <div class="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/pw/AP1GczMFAUSm6aUhZomjsMJwjishUqImGPjVXAyEKwcheCmn2Fd8sfyhhu7zqZGe18xAHcSCB28qgScNaOCgdHXZAINZqGL9P0FYBom6EEZOSfORRHMYZwxIP-NpOkKINF3cbojVEoVnVMEErkoh1UTwSQtT=w913-h913-s-no-gm?authuser=0')] bg-cover bg-center"></div>
                     <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
-                    
+
                     <div class="relative z-10 text-center">
-                        <h1 class="text-5xl font-extrabold text-white tracking-tight" id="main-header-title">LALITA Interactive Catalog </h1>
-                        <p class="text-xl text-teal-300 mt-2 font-light" id="main-header-subtitle">Library of Archaeological Legacies and Iconographic Treasures of Ancient Java</p>
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight" id="main-header-title">LALITA Interactive Catalog</h1>
+                        <p class="text-lg md:text-xl text-teal-300 mt-2 font-light" id="main-header-subtitle">Library of Archaeological Legacies and Iconographic Treasures of Ancient Java</p>
+                        <p class="text-xs text-gray-400 mt-4">Powered by RIN Dataverse (BRIN)</p>
                     </div>
                 </header>
 
@@ -134,47 +97,41 @@
 
                 <p id="view-status-message" class="text-sm text-center text-red-400 mb-4 h-5 font-semibold"></p>
 
-                <div id="canvas-container" class="w-full h-[60vh] bg-gray-900 rounded-2xl shadow-3xl border border-gray-700 overflow-hidden mb-8 transform hover:shadow-teal-500/30 transition-shadow duration-300">
-                    <!-- THREE.js canvas will be injected here -->
+                <div id="canvas-container" class="w-full h-[60vh] bg-gray-900 rounded-2xl shadow-3xl border border-gray-700 overflow-hidden mb-8 transform hover:shadow-teal-500/30 transition-shadow duration-300 relative">
+                    <div id="loading-overlay" class="hidden absolute inset-0 bg-gray-900/80 z-20 flex items-center justify-center">
+                        <div class="text-teal-400 font-bold animate-pulse text-xl">Loading Model...</div>
+                    </div>
                 </div>
 
                 <div>
                     <h2 class="text-2xl font-bold text-white mb-3 border-b border-gray-700 pb-2" id="detail-header">📊 Detail Objek</h2>
                     <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-inner">
-                        <pre id="object-description" class="text-gray-300 text-sm whitespace-pre-wrap font-mono leading-relaxed">
-Silakan muat file .obj dari daftar di kiri.
-                        </pre>
+                        <pre id="object-description" class="text-gray-300 text-sm whitespace-pre-wrap font-mono leading-relaxed">Silakan muat file .obj dari daftar di kiri.</pre>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script type="module">
-        // Import all necessary modules from the import map
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
         import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'; 
 
-        // --- KONFIGURASI GOOGLE DRIVE ---
-        // !!! PENTING: Ganti dengan API Key Anda !!!
-        const API_KEY = 'AIzaSyBxGawynVXWOkPliGbuG9blk8kO73cfF8I'; 
-        
-        // ID Folder Google Drive yang akan di-load
-        const FOLDER_ID = '1LiuZZW-UbjBj1DPHrJV3PsF7pjKAgmiY';
+        // --- KONFIGURASI DATAVERSE ---
+        const API_KEY = '5a454a48-7efd-45b9-a080-33d0b9cc44c1';
+        const BASE_URL = 'https://data.brin.go.id';
+        const DATASET_PID = 'hdl:20.500.12690/RIN/FRQUET'; 
 
-
-        // --- GLOBAL UI STRINGS (Multilingual Support) ---
+        // --- GLOBAL UI STRINGS ---
         const UI_STRINGS = {
             id: {
                 appTitle: "INTERACTIVE CATALOG",
-                loginButton: "Masuk / Daftar",
+                loginButton: "Akses Data",
                 sidebarTitle: "📂 Daftar Model", 
                 filesFoundLabel: "File Ditemukan:",
-                fileListPlaceholder: "Mengambil data dari Google Drive...", 
-                // View Mode Labels
+                fileListPlaceholder: "Mengambil data dari Server...", 
                 viewModeLabel: "Pilih Mode Tampilan",
                 optDetail: "Detail (Warna Normal)",
                 optShaded: "Shaded (Pencahayaan)",
@@ -184,48 +141,41 @@ Silakan muat file .obj dari daftar di kiri.
                 optWireframe: "Tampilkan Wireframe",
                 detailHeader: "📊 Detail Objek",
                 descPlaceholder: "Silakan muat file .obj dari daftar di kiri.",
-                // Status Google Drive
-                gdriveLoading: "Mengambil data dari Google Drive...",
-                gdriveError: (err) => `Error Google Drive: ${err.message}. Pastikan API Key valid dan folder dapat diakses.`,
-                gdriveNoFiles: "Tidak ada file .obj ditemukan di folder Google Drive.",
-                // Status Messages
+                repoLoading: "Mengambil daftar file dari Dataverse RIN...",
+                repoError: (err) => `Error Koneksi: ${err}. Pastikan kunci API valid.`,
+                repoNoFiles: "Tidak ada file .obj ditemukan di dataset ini.",
                 loading: (fileName) => `Memuat "${fileName}"...`,
-                loadingText: (fileName) => `Memuat "${fileName}" dan teks pendamping...`,
-                loadingMtl: (fileName) => `Memuat "${fileName}" dan material...`,
-                loadingTexture: (fileName) => `Memuat "${fileName}" dan tekstur...`,
-                errorReadTxt: (fileName) => `[Peringatan: Gagal memuat file TXT pendamping: ${fileName}]`,
-                errorLoadTxt: (fileName) => `[Peringatan: Terjadi kesalahan saat memuat file TXT pendamping: ${fileName}]`,
+                loadingText: (fileName) => `Memuat data teks "${fileName}"...`,
+                loadingMtl: (fileName) => `Memuat material "${fileName}"...`,
+                loadingTexture: (fileName) => `Memuat tekstur "${fileName}"...`,
+                errorReadTxt: (fileName) => `[Peringatan: Gagal membaca file teks: ${fileName}]`,
                 errorLoadObj: (fileName) => `Error: Gagal memuat file ${fileName}.`,
-                errorFetch: (fileName, status) => `Error: Gagal mengambil file ${fileName} dari Google Drive. Status: ${status}`,
-                errorParseObj: "Error: Gagal memuat atau parse .obj file. Periksa konsol untuk detail.",
                 noModelLoaded: "Tidak ada model yang dimuat.",
-                detailModeApplied: "Mode Tampilan: Detail (Normal) diterapkan.",
-                shadedModeApplied: "Mode Tampilan: Shaded (Lit) diterapkan.",
-                originalTextureApplied: "Mode Tampilan: Original (Tekstur Kustom) diterapkan.",
-                originalMtlApplied: "Mode Tampilan: Original (MTL) berhasil diterapkan.",
+                detailModeApplied: "Mode: Detail (Normal) diterapkan.",
+                shadedModeApplied: "Mode: Shaded (Lit) diterapkan.",
+                originalTextureApplied: "Mode: Original (Tekstur Kustom) diterapkan.",
+                originalMtlApplied: "Mode: Original (MTL) berhasil diterapkan.",
                 warningNoMtlTex: "PERINGATAN: File MTL/Tekstur tidak ditemukan. Kembali ke mode Shaded.",
-                // Description Fields
-                fieldName: "File Name",
-                fieldMeshes: "Meshes",
-                fieldVertices: "Total Vertices",
-                fieldTriangles: "Total Triangles",
-                fieldMtlLoaded: "MTL Data Loaded",
-                fieldTexLoaded: "Texture Loaded",
-                statusYesMtl: "Ya (Bahan baku MTL dimuat)",
-                statusNoMtl: "Tidak (Default/Tidak Ditemukan)",
-                statusYesTex: "Ya (Tekstur kustom dimuat)",
-                statusNoTex: "Tidak (Default/Tidak Ditemukan)",
-                indicatorNoTxt: "(No TXT)",
+                fieldName: "Nama File",
+                fieldMeshes: "Jumlah Mesh",
+                fieldVertices: "Total Vertex",
+                fieldTriangles: "Total Segitiga",
+                fieldMtlLoaded: "Data MTL",
+                fieldTexLoaded: "Data Tekstur",
+                statusYesMtl: "Ya (Dimuat)",
+                statusNoMtl: "Tidak (Default)",
+                statusYesTex: "Ya (Dimuat)",
+                statusNoTex: "Tidak (Default)",
+                indicatorNoTxt: "(No Info)",
                 indicatorNoMtl: "(No MTL)",
                 indicatorNoTex: "(No TEX)"
             },
             en: {
                 appTitle: "INTERACTIVE CATALOG",
-                loginButton: "Login / Register",
+                loginButton: "Access Data",
                 sidebarTitle: "📂 Model List", 
                 filesFoundLabel: "Files Found:",
-                fileListPlaceholder: "Loading from Google Drive...", 
-                // View Mode Labels
+                fileListPlaceholder: "Fetching data from Server...", 
                 viewModeLabel: "Select View Mode",
                 optDetail: "Detail (Normal Color)",
                 optShaded: "Shaded (Lit)",
@@ -235,223 +185,131 @@ Silakan muat file .obj dari daftar di kiri.
                 optWireframe: "Show Wireframe",
                 detailHeader: "📊 Object Details",
                 descPlaceholder: "Please load an .obj file from the list on the left.",
-                // Google Drive Status
-                gdriveLoading: "Loading from Google Drive...",
-                gdriveError: (err) => `Google Drive Error: ${err.message}. Ensure API Key is valid and folder is accessible.`,
-                gdriveNoFiles: "No .obj files found in the Google Drive folder.",
-                // Status Messages
+                repoLoading: "Fetching file list from RIN Dataverse...",
+                repoError: (err) => `Connection Error: ${err}. Check API Key.`,
+                repoNoFiles: "No .obj files found in this dataset.",
                 loading: (fileName) => `Loading "${fileName}"...`,
-                loadingText: (fileName) => `Loading "${fileName}" and companion text...`,
-                loadingMtl: (fileName) => `Loading "${fileName}" and materials...`,
-                loadingTexture: (fileName) => `Loading "${fileName}" and texture...`,
-                errorReadTxt: (fileName) => `[Warning: Failed to read companion TXT file: ${fileName}]`,
-                errorLoadTxt: (fileName) => `[Warning: Error loading companion TXT file: ${fileName}]`,
+                loadingText: (fileName) => `Loading text data "${fileName}"...`,
+                loadingMtl: (fileName) => `Loading materials "${fileName}"...`,
+                loadingTexture: (fileName) => `Loading texture "${fileName}"...`,
+                errorReadTxt: (fileName) => `[Warning: Failed to read text file: ${fileName}]`,
                 errorLoadObj: (fileName) => `Error: Failed to load file ${fileName}.`,
-                errorFetch: (fileName, status) => `Error: Failed to fetch file ${fileName} from Google Drive. Status: ${status}`,
-                errorParseObj: "Error: Failed to load or parse .obj file. Check console for details.",
                 noModelLoaded: "No model is currently loaded.",
-                detailModeApplied: "View Mode: Detail (Normal) applied.",
-                shadedModeApplied: "View Mode: Shaded (Lit) applied.",
-                originalTextureApplied: "View Mode: Original (Custom Texture) applied.",
-                originalMtlApplied: "View Mode: Original (MTL) successfully applied.",
-                warningNoMtlTex: "WARNING: MTL/Texture file not found. Falling back to Shaded mode.",
-                // Description Fields
+                detailModeApplied: "Mode: Detail (Normal) applied.",
+                shadedModeApplied: "Mode: Shaded (Lit) applied.",
+                originalTextureApplied: "Mode: Original (Custom Texture) applied.",
+                originalMtlApplied: "Mode: Original (MTL) successfully applied.",
+                warningNoMtlTex: "INFO: MTL/Texture file unavailable. Using Shaded mode.",
                 fieldName: "File Name",
                 fieldMeshes: "Meshes",
                 fieldVertices: "Total Vertices",
                 fieldTriangles: "Total Triangles",
-                fieldMtlLoaded: "MTL Data Loaded",
-                fieldTexLoaded: "Texture Loaded",
-                statusYesMtl: "Yes (MTL materials loaded)",
-                statusNoMtl: "No (Default/Not Found)",
-                statusYesTex: "Yes (Custom Texture loaded)",
-                statusNoTex: "No (Default/Not Found)",
-                indicatorNoTxt: "(No TXT)",
+                fieldMtlLoaded: "MTL Data",
+                fieldTexLoaded: "Texture Data",
+                statusYesMtl: "Yes (Loaded)",
+                statusNoMtl: "No",
+                statusYesTex: "Yes (Loaded)",
+                statusNoTex: "No",
+                indicatorNoTxt: "(No Info)",
                 indicatorNoMtl: "(No MTL)",
                 indicatorNoTex: "(No TEX)"
             }
         };
 
-        // Current language state
+        // --- GLOBAL VARIABLES ---
         let currentLang = 'id';
-        
         let scene, camera, renderer, controls, loadedObject;
         let ambientLight, directionalLight;
+        
+        // DOM Elements
         const canvasContainer = document.getElementById('canvas-container');
         const descriptionEl = document.getElementById('object-description');
         const fileListEl = document.getElementById('file-list');
         const viewStatusMessageEl = document.getElementById('view-status-message');
         const languageSelect = document.getElementById('language-select');
         const fileListPlaceholderEl = document.getElementById('file-list-placeholder');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const viewModeSelect = document.getElementById('view-mode-select');
+        const wireframeSelect = document.getElementById('wireframe-select');
 
-        // Map untuk menyimpan objek File Google Drive (.obj, .txt, .mtl, .tex)
-        // Strukturnya: Map<string, {objFile, txtFile, mtlFile, texFile}>
-        // Di mana value adalah objek dari Google Drive API {id, name, webContentLink}
         let loadedFileObjects = new Map();
         
-        // Variabel global untuk menyimpan material yang dimuat
+        // Materials (Sama seperti v2.7.1)
         let originalMaterials = null; 
         let customTexture = null;
         let customTexturedMaterial = null;
+        let isWireframe = false;
 
-
-        // --- Materials ---
         const normalMaterial = new THREE.MeshNormalMaterial();
         const shadedMaterial = new THREE.MeshStandardMaterial({
-            color: 0x86efac, // Emerald-400 for a smooth look
+            color: 0x86efac, 
             roughness: 0.7,
             metalness: 0.1
         });
-        let currentBaseMaterial = normalMaterial; 
-        let isWireframe = false;
 
-
-        // --- FUNGSI: UPDATE BAHASA UI ---
-        function updateUI(lang) {
-            currentLang = lang;
-            const strings = UI_STRINGS[lang];
-            
-            // 1. Header dan Tombol
-            document.getElementById('app-title-text').textContent = strings.appTitle;
-            document.getElementById('login-button').textContent = strings.loginButton;
-
-            // 2. Sidebar
-            document.getElementById('sidebar-title').textContent = strings.sidebarTitle;
-            document.getElementById('files-found-label').textContent = strings.filesFoundLabel;
-            
-            // Perbarui placeholder
-            if (fileListPlaceholderEl) {
-                const status = fileListPlaceholderEl.dataset.gdriveStatus;
-                if (status === 'loading') {
-                    fileListPlaceholderEl.textContent = strings.gdriveLoading;
-                } else if (status === 'empty') {
-                    fileListPlaceholderEl.textContent = strings.gdriveNoFiles;
-                } else if (status === 'placeholder') {
-                    fileListPlaceholderEl.textContent = strings.descPlaceholder; // Fallback jika sudah dimuat tapi kosong
-                }
-                // Jika status='error', biarkan pesan error
-            }
-
-            // 3. Dropdown Options
-            document.getElementById('view-mode-label').textContent = strings.viewModeLabel;
-            document.getElementById('opt-detail').textContent = strings.optDetail;
-            document.getElementById('opt-shaded').textContent = strings.optShaded;
-            document.getElementById('opt-original').textContent = strings.optOriginal;
-
-            document.getElementById('mesh-view-label').textContent = strings.meshViewLabel;
-            document.getElementById('opt-solid').textContent = strings.optSolid;
-            document.getElementById('opt-wireframe').textContent = strings.optWireframe;
-
-            // 4. Details Section
-            document.getElementById('detail-header').textContent = strings.detailHeader;
-            
-            // 5. Update Description Box (if no object is loaded)
-            if (!loadedObject) {
-                descriptionEl.textContent = strings.descPlaceholder;
-            } else {
-                // Jika objek sudah dimuat, panggil updateDescription untuk meregenerasi teks
-                // Pastikan properti descriptionText sudah tersimpan di loadedObject (disediakan oleh loadObjectAndDescription)
-                updateDescription(loadedObject, loadedObject.name, loadedObject.descriptionText, null, loadedObject.textureDataURL);
-            }
-            
-            // 6. Re-render file list indicators
-            if (loadedFileObjects.size > 0) {
-                renderFileList();
-            }
-        }
-
-
+        // --- INITIALIZATION ---
         async function init() {
-            // Set initial language
             updateUI(languageSelect.value);
 
-            // --- Scene ---
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x374151); // Gray-700 for canvas background
+            scene.background = new THREE.Color(0x374151); 
 
-            // --- Camera ---
             camera = new THREE.PerspectiveCamera(75, 2, 0.1, 1000); 
             camera.position.set(10, 10, 10);
 
-            // --- Renderer ---
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setPixelRatio(window.devicePixelRatio);
             canvasContainer.appendChild(renderer.domElement);
             onWindowResize(); 
 
-            // --- Controls ---
             controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true; 
             controls.dampingFactor = 0.05;
 
-            // --- Lighting ---
-            ambientLight = new THREE.AmbientLight(0xffffff, 0.9); // Brighter ambient light
+            // Lighting (Sama seperti v2.7.1)
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.9); 
             scene.add(ambientLight);
 
-            directionalLight = new THREE.DirectionalLight(0xffffff, 1.2); // Stronger directional light
+            directionalLight = new THREE.DirectionalLight(0xffffff, 1.2); 
             directionalLight.position.set(10, 15, 10);
             directionalLight.visible = false; 
             scene.add(directionalLight);
 
-            // --- Helpers ---
-            const gridHelper = new THREE.GridHelper(100, 100, 0x4b5563, 0x374151); // Darker grid
+            const gridHelper = new THREE.GridHelper(100, 100, 0x4b5563, 0x374151); 
             scene.add(gridHelper);
 
-            // --- Event Listeners ---
+            // Listeners
             window.addEventListener('resize', onWindowResize);
-            
-            // Listener untuk tombol bahasa
             languageSelect.addEventListener('change', (e) => updateUI(e.target.value));
+            
+            viewModeSelect.addEventListener('change', () => updateObjectMaterial(true));
+            wireframeSelect.addEventListener('change', () => updateObjectMaterial(true));
 
-            // Listener untuk daftar file (sekarang dari Google Drive)
             fileListEl.addEventListener('click', (event) => {
                 const button = event.target.closest('.file-item-button');
                 const fileKey = button?.dataset.fileKey; 
-            
                 if (!fileKey) return; 
                 
                 const filePairToLoad = loadedFileObjects.get(fileKey); 
-                
                 if (filePairToLoad && filePairToLoad.objFile) {
-                    // Nonaktifkan tombol lain saat memuat
                     document.querySelectorAll('.file-item-button').forEach(btn => btn.disabled = true);
-                    
-                    // Muat model dan deskripsi dari URL Google Drive
-                    loadObjectAndDescription(filePairToLoad.objFile, filePairToLoad.txtFile, filePairToLoad.mtlFile, filePairToLoad.texFile) // Pass texFile
+                    loadingOverlay.classList.remove('hidden');
+
+                    loadObjectAndDescription(filePairToLoad.objFile, filePairToLoad.txtFile, filePairToLoad.mtlFile, filePairToLoad.texFile) 
                         .catch(err => {
+                            console.error("Load Error:", err);
                             const strings = UI_STRINGS[currentLang];
-                            console.error(strings.errorLoadObj(filePairToLoad.objFile.name), err);
-                            // Tampilkan error fetch jika ada
-                            const errorMsg = err.message.includes('fetch') ? err.message : strings.errorLoadObj(filePairToLoad.objFile.name);
-                            updateDescription(null, null, null, errorMsg);
+                            updateDescription(null, null, null, strings.errorLoadObj(filePairToLoad.objFile.filename));
                         })
                         .finally(() => {
                             document.querySelectorAll('.file-item-button').forEach(btn => btn.disabled = false);
-                            // Pastikan model yang baru dimuat menggunakan mode tampilan default (Normal)
-                            document.getElementById('view-mode-select').value = 'detail';
-                            document.getElementById('wireframe-select').value = 'solid';
-                            updateObjectMaterial();
+                            loadingOverlay.classList.add('hidden');
                         });
                 }
             });
 
-            // Listener untuk opsi tampilan (Dropdowns)
-            document.getElementById('view-mode-select').addEventListener('change', updateObjectMaterial);
-            document.getElementById('wireframe-select').addEventListener('change', updateObjectMaterial);
-
-
-            // --- Start Animation Loop ---
             animate();
-
-            // --- Mulai memuat file dari Google Drive ---
-            if (!API_KEY || API_KEY != 'AIzaSyBxGawynVXWOkPliGbuG9blk8kO73cfF8I') {
-                console.error("API_KEY tidak diatur dengan benar. Silakan edit file HTML.");
-                fileListPlaceholderEl.textContent = "Error: API_KEY tidak diatur.";
-                fileListPlaceholderEl.classList.add("text-red-500");
-                fileListPlaceholderEl.dataset.gdriveStatus = 'error';
-                return;
-            }
-            loadGoogleDriveFiles();
+            loadDataverseFiles();
         }
 
         function animate() {
@@ -461,136 +319,132 @@ Silakan muat file .obj dari daftar di kiri.
         }
 
         function onWindowResize() {
-            // Pastikan container punya ukuran sebelum menghitung rasio
             const width = canvasContainer.clientWidth;
             const height = canvasContainer.clientHeight;
-            
             if (width === 0 || height === 0) return;
-            
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
         }
 
-        /**
-         * Menampilkan pesan status sementara di bawah dropdown.
-         */
         function displayStatusMessage(message, type = 'info', duration = 3000) {
-            // Clear previous timeout if any
             if (window.statusTimeout) clearTimeout(window.statusTimeout);
-
             viewStatusMessageEl.textContent = message;
-            // Reset kelas untuk mempertahankan tinggi
             viewStatusMessageEl.className = 'text-sm text-center mb-4 h-5 font-semibold transition-all duration-300'; 
-
-            if (type === 'warn') {
-                viewStatusMessageEl.classList.add('text-orange-400');
-            } else {
-                viewStatusMessageEl.classList.add('text-teal-400');
+            if (type === 'warn') viewStatusMessageEl.classList.add('text-orange-400');
+            else viewStatusMessageEl.classList.add('text-teal-400');
+            
+            if (duration > 0) {
+                window.statusTimeout = setTimeout(() => {
+                    viewStatusMessageEl.textContent = '';
+                }, duration);
             }
-
-            // Clear the message after 'duration'
-            window.statusTimeout = setTimeout(() => {
-                viewStatusMessageEl.textContent = '';
-                viewStatusMessageEl.className = 'text-sm text-center mb-4 h-5 font-semibold transition-all duration-300'; // Reset to maintain height
-            }, duration);
         }
 
-        // --- Fungsi: Memuat file dari Google Drive ---
-        async function loadGoogleDriveFiles() {
+        // --- UI FUNCTIONS ---
+        function updateUI(lang) {
+            currentLang = lang;
+            const strings = UI_STRINGS[lang];
+            
+            document.getElementById('app-title-text').textContent = strings.appTitle;
+            document.getElementById('login-button').textContent = strings.loginButton;
+            document.getElementById('sidebar-title').textContent = strings.sidebarTitle;
+            document.getElementById('files-found-label').textContent = strings.filesFoundLabel;
+            
+            if (fileListPlaceholderEl) {
+                const status = fileListPlaceholderEl.dataset.status;
+                if (status === 'loading') fileListPlaceholderEl.textContent = strings.repoLoading;
+                else if (status === 'empty') fileListPlaceholderEl.textContent = strings.repoNoFiles;
+                else if (status === 'placeholder') fileListPlaceholderEl.textContent = strings.descPlaceholder; 
+            }
+
+            document.getElementById('view-mode-label').textContent = strings.viewModeLabel;
+            document.getElementById('opt-detail').textContent = strings.optDetail;
+            document.getElementById('opt-shaded').textContent = strings.optShaded;
+            document.getElementById('opt-original').textContent = strings.optOriginal;
+            document.getElementById('mesh-view-label').textContent = strings.meshViewLabel;
+            document.getElementById('opt-solid').textContent = strings.optSolid;
+            document.getElementById('opt-wireframe').textContent = strings.optWireframe;
+            document.getElementById('detail-header').textContent = strings.detailHeader;
+            
+            if (!loadedObject) {
+                descriptionEl.textContent = strings.descPlaceholder;
+            } else {
+                updateDescription(loadedObject, loadedObject.name, loadedObject.descriptionText, null, loadedObject.textureDataURL);
+            }
+            if (loadedFileObjects.size > 0) renderFileList();
+        }
+
+        // --- DATA FETCHING (DATAVERSE) ---
+        async function loadDataverseFiles() {
             const strings = UI_STRINGS[currentLang];
-            fileListPlaceholderEl.textContent = strings.gdriveLoading;
-            fileListPlaceholderEl.dataset.gdriveStatus = 'loading';
+            fileListPlaceholderEl.textContent = strings.repoLoading;
+            fileListPlaceholderEl.dataset.status = 'loading';
 
             try {
-                // 1. Load GAPI client
-                await new Promise((resolve, reject) => gapi.load('client', { callback: resolve, onerror: reject }));
+                const endpoint = `${BASE_URL}/api/datasets/:persistentId/versions/:latest/files?persistentId=${DATASET_PID}`;
+                const response = await fetch(endpoint, { headers: { 'X-Dataverse-Key': API_KEY } });
 
-                // 2. Initialize GAPI client
-                await gapi.client.init({
-                    'apiKey': API_KEY,
-                    'discoveryDocs': ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-                });
-
-                // 3. List files from the folder
-                const response = await gapi.client.drive.files.list({
-                    q: `'${FOLDER_ID}' in parents and trashed=false`,
-                    // Minta webContentLink untuk mengunduh file
-                    fields: 'files(id, name, webContentLink, fileExtension)',
-                    pageSize: 500 // Asumsi file di bawah 500
-                });
-
-                const files = response.result.files;
-                if (!files || files.length === 0) {
-                    fileListPlaceholderEl.textContent = strings.gdriveNoFiles;
-                    fileListPlaceholderEl.dataset.gdriveStatus = 'empty';
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const json = await response.json();
+                
+                if (!json.data || json.data.length === 0) {
+                    fileListPlaceholderEl.textContent = strings.repoNoFiles;
+                    fileListPlaceholderEl.dataset.status = 'empty';
                     return;
                 }
 
-                // 4. Proses dan pasangkan file (OBJ, TXT, MTL, Tekstur)
-                const fileMap = new Map(); // Peta: nama file -> objek file GDrive
-                files.forEach(file => {
-                    fileMap.set(file.name, file);
+                const fileMap = new Map(); 
+
+                json.data.forEach(item => {
+                    const file = item.dataFile;
+                    const filename = file.filename;
+                    const lastDotIndex = filename.lastIndexOf('.');
+                    if (lastDotIndex === -1) return; 
+
+                    const ext = filename.substring(lastDotIndex + 1).toLowerCase();
+                    const baseName = filename.substring(0, lastDotIndex);
+
+                    if (!fileMap.has(baseName)) fileMap.set(baseName, { objFile: null, txtFile: null, mtlFile: null, texFile: null });
+                    const entry = fileMap.get(baseName);
+                    const fileData = { id: file.id, filename: filename, contentType: file.contentType };
+
+                    if (ext === 'obj') entry.objFile = fileData;
+                    else if (ext === 'txt') entry.txtFile = fileData;
+                    else if (ext === 'mtl') entry.mtlFile = fileData;
+                    else if (['jpg', 'jpeg', 'png'].includes(ext)) entry.texFile = fileData;
                 });
 
-                loadedFileObjects.clear(); // Bersihkan map global
-
-                fileMap.forEach((file) => {
-                    if (file.fileExtension && file.fileExtension.toLowerCase() === 'obj') {
-                        const baseName = file.name.slice(0, -4); // Hapus .obj
-                        
-                        const txtFile = fileMap.get(baseName + '.txt') || null;
-                        const mtlFile = fileMap.get(baseName + '.mtl') || null;
-                        
-                        // Periksa ekstensi gambar yang umum
-                        let texFile = fileMap.get(baseName + '.jpg') || fileMap.get(baseName + '.png') || fileMap.get(baseName + '.jpeg') || null;
-
-                        loadedFileObjects.set(file.name, {
-                            objFile: file, // {id, name, webContentLink, ...}
-                            txtFile: txtFile,
-                            mtlFile: mtlFile,
-                            texFile: texFile
-                        });
-                    }
+                loadedFileObjects.clear();
+                fileMap.forEach((val, key) => {
+                    if (val.objFile) loadedFileObjects.set(key, val);
                 });
 
-                // 5. Render daftar file ke sidebar
                 if (loadedFileObjects.size === 0) {
-                    fileListPlaceholderEl.textContent = strings.gdriveNoFiles;
-                    fileListPlaceholderEl.dataset.gdriveStatus = 'empty';
-                    updateUI(currentLang); // <-- Ensure UI labels/options are updated
+                    fileListPlaceholderEl.textContent = strings.repoNoFiles;
+                    fileListPlaceholderEl.dataset.status = 'empty';
                 } else {
                     renderFileList();
-                    updateUI(currentLang); // <-- Ensure UI labels/options are updated after files loaded
                 }
+                updateUI(currentLang);
 
             } catch (err) {
-                console.error("Gagal memuat file Google Drive:", err);
-                const errorResult = err.result || { error: { message: err.message } };
-                fileListPlaceholderEl.textContent = strings.gdriveError(errorResult.error);
+                console.error("Dataverse Error:", err);
+                fileListPlaceholderEl.textContent = strings.repoError(err.message);
                 fileListPlaceholderEl.classList.add("text-red-500");
-                fileListPlaceholderEl.dataset.gdriveStatus = 'error';
-                updateUI(currentLang); // <-- Ensure UI labels/options are updated on error
+                fileListPlaceholderEl.dataset.status = 'error';
             }
         }
 
-
-        // --- Fungsi: Merender Daftar File ke Sidebar ---
         function renderFileList() {
             const strings = UI_STRINGS[currentLang];
-
-            fileListEl.innerHTML = ''; // Bersihkan list
+            fileListEl.innerHTML = ''; 
             
-            // Tambahkan kembali placeholder di list jika diperlukan (untuk menjaga konsistensi)
             if (loadedFileObjects.size === 0) {
                  fileListEl.appendChild(fileListPlaceholderEl);
-                 updateUI(currentLang); // <-- Ensure UI labels/options are updated
                  return;
             }
-            // Hapus placeholder jika list sudah ada isinya
-            if (fileListPlaceholderEl && fileListPlaceholderEl.parentNode) {
-                fileListPlaceholderEl.remove();
-            }
+            if (fileListPlaceholderEl && fileListPlaceholderEl.parentNode) fileListPlaceholderEl.remove();
 
             const objKeys = Array.from(loadedFileObjects.keys()).sort((a, b) => a.localeCompare(b));
 
@@ -602,313 +456,218 @@ Silakan muat file .obj dari daftar di kiri.
                 
                 const filePair = loadedFileObjects.get(key);
                 let indicator = '';
-                
-                // Indikator menggunakan string bahasa saat ini
-                if (!filePair.txtFile) {
-                    indicator += ` <span class="text-orange-400 text-xs font-bold">${strings.indicatorNoTxt}</span>`;
-                }
-                if (!filePair.mtlFile) {
-                    indicator += ` <span class="text-sky-400 text-xs font-bold">${strings.indicatorNoMtl}</span>`;
-                }
-                if (!filePair.texFile) {
-                    indicator += ` <span class="text-yellow-400 text-xs font-bold">${strings.indicatorNoTex}</span>`;
-                }
+                if (!filePair.txtFile) indicator += ` <span class="text-orange-400 text-xs font-bold">${strings.indicatorNoTxt}</span>`;
+                if (!filePair.mtlFile) indicator += ` <span class="text-sky-400 text-xs font-bold">${strings.indicatorNoMtl}</span>`;
+                if (!filePair.texFile) indicator += ` <span class="text-yellow-400 text-xs font-bold">${strings.indicatorNoTex}</span>`;
 
                 button.innerHTML = key + indicator;
                 li.appendChild(button);
                 fileListEl.appendChild(li);
             });
-
-            updateUI(currentLang); // <-- Ensure UI labels/options are updated after rendering
         }
         
-        /**
-         * Mengambil konten file dari Google Drive menggunakan webContentLink.
-         * @param {Object} fileObj Objek file Google Drive.
-         * @returns {Promise<string|ArrayBuffer>} Konten file.
-         */
-        async function fetchGoogleDriveFileContent(fileObj, responseType = 'text') {
-            const url = `${fileObj.webContentLink}&key=${API_KEY}`;
-            
-            // Gunakan mode 'cors' untuk mengatasi masalah CORS
-            const response = await fetch(url, { mode: 'cors' });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${fileObj.name}. HTTP status: ${response.status}`);
-            }
-
-            if (responseType === 'arraybuffer') {
-                return response.arrayBuffer();
-            }
-            return response.text();
+        async function fetchDataverseFileContent(fileId, responseType = 'text') {
+            const url = `${BASE_URL}/api/access/datafile/${fileId}`;
+            const response = await fetch(url, { headers: { 'X-Dataverse-Key': API_KEY } });
+            if (!response.ok) throw new Error(`Failed to fetch file. Status: ${response.status}`);
+            return responseType === 'arraybuffer' ? response.arrayBuffer() : response.text();
         }
 
-        // --- Fungsi: Memuat Model OBJ dan File TXT/MTL/Tekstur dari URL ---
+        // --- LOADING & PARSING LOGIC (DISESUAIKAN DENGAN v2.7.1) ---
         async function loadObjectAndDescription(objFile, txtFile = null, mtlFile = null, texFile = null) {
             const strings = UI_STRINGS[currentLang];
-            const fileName = objFile.name;
-            
-            displayStatusMessage(strings.loading(fileName), 'info', 0); // Tampilkan loading tak terbatas
+            const fileName = objFile.filename;
+            displayStatusMessage(strings.loading(fileName), 'info', 0);
 
-            // 1. Hapus model lama
+            // Cleanup OLD
             if (loadedObject) {
                 scene.remove(loadedObject);
-                loadedObject.traverse(function(child) {
+                loadedObject.traverse(child => {
                     if (child.isMesh) {
                         child.geometry.dispose();
-                        if (Array.isArray(child.material)) {
-                            child.material.forEach(m => m.dispose());
-                        } else {
-                            child.material.dispose();
-                        }
+                        if (Array.isArray(child.material)) child.material.forEach(m => { if(m.map) m.map.dispose(); m.dispose(); });
+                        else { if(child.material.map) child.material.map.dispose(); child.material.dispose(); }
                     }
                 });
             }
+            if (customTexture) customTexture.dispose();
             loadedObject = null;
             originalMaterials = null;
             customTexture = null;
             customTexturedMaterial = null;
 
-            // 2. Load TXT File (Description) - DILAKUKAN PERTAMA UNTUK FIX ERROR TEKS
-            let descriptionText = strings.noModelLoaded;
+            // 1. Fetch OBJ Content
+            const objContent = await fetchDataverseFileContent(objFile.id, 'text');
+
+            // 2. Fetch Description
+            let descriptionText = strings.descPlaceholder;
             if (txtFile) {
                 try {
                     displayStatusMessage(strings.loadingText(fileName), 'info', 0);
-                    descriptionText = await fetchGoogleDriveFileContent(txtFile, 'text');
-                } catch (e) {
-                    console.warn(strings.errorLoadTxt(txtFile.name), e);
-                    descriptionText = strings.errorReadTxt(txtFile.name);
-                }
-            } else {
-                 descriptionText = strings.descPlaceholder;
+                    descriptionText = await fetchDataverseFileContent(txtFile.id, 'text');
+                } catch (e) { descriptionText = strings.errorReadTxt(txtFile.filename); }
             }
 
-            // 3. Load MTL File (Materials)
-            let mtlContent = null;
-            let mtlName = null;
+            // 3. Fetch MTL
             if (mtlFile) {
                 try {
                     displayStatusMessage(strings.loadingMtl(fileName), 'info', 0);
-                    mtlName = mtlFile.name;
-                    mtlContent = await fetchGoogleDriveFileContent(mtlFile, 'text');
-                } catch (e) {
-                    console.warn(`MTL load failed for ${mtlFile.name}:`, e);
-                }
+                    const mtlContent = await fetchDataverseFileContent(mtlFile.id, 'text');
+                    const mtlLoader = new MTLLoader();
+                    originalMaterials = mtlLoader.parse(mtlContent);
+                    originalMaterials.preload();
+                } catch (e) { console.warn("MTL Error", e); }
             }
 
-            // 4. Load Texture File (Custom Texture Map)
+            // 4. Fetch Texture & Create Material (WAIT UNTIL READY)
             let textureDataURL = null;
             if (texFile) {
                 try {
                     displayStatusMessage(strings.loadingTexture(fileName), 'info', 0);
-                    const arrayBuffer = await fetchGoogleDriveFileContent(texFile, 'arraybuffer');
-                    
-                    // Membuat Blob dan Data URL dari ArrayBuffer
-                    const blob = new Blob([arrayBuffer], { type: texFile.fileExtension === 'jpg' || texFile.fileExtension === 'jpeg' ? 'image/jpeg' : 'image/png' });
+                    const arrayBuffer = await fetchDataverseFileContent(texFile.id, 'arraybuffer');
+                    const mimeType = texFile.contentType || (texFile.filename.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg');
+                    const blob = new Blob([arrayBuffer], { type: mimeType });
                     textureDataURL = URL.createObjectURL(blob);
 
-                    // Buat material bertekstur kustom
-                    customTexture = new THREE.TextureLoader().load(textureDataURL, 
-                        // OnLoad
-                        () => {
-                            // URL.revokeObjectURL(textureDataURL); // Jangan dicabut dulu, mungkin diperlukan
-                        },
-                        undefined,
-                        // OnError
-                        (e) => {
-                            console.error('THREE.js Texture Load Error:', e);
-                            textureDataURL = null; // Setel ulang jika gagal dimuat oleh THREE.js
-                        }
-                    );
-                    customTexturedMaterial = new THREE.MeshStandardMaterial({
-                        map: customTexture,
-                        roughness: 0.8,
-                        metalness: 0.1
+                    // PENTING: Tunggu texture load selesai sebelum parse OBJ
+                    await new Promise((resolve, reject) => {
+                        const texLoader = new THREE.TextureLoader();
+                        customTexture = texLoader.load(
+                            textureDataURL,
+                            (tex) => {
+                                tex.colorSpace = THREE.SRGBColorSpace;
+                                tex.wrapS = THREE.RepeatWrapping;
+                                tex.wrapT = THREE.RepeatWrapping;
+                                customTexturedMaterial = new THREE.MeshStandardMaterial({ 
+                                    map: tex, 
+                                    color: 0xffffff,
+                                    roughness: 0.6,
+                                    metalness: 0.1,
+                                    side: THREE.DoubleSide
+                                });
+                                resolve();
+                            },
+                            undefined,
+                            (err) => { console.warn(err); resolve(); } // Resolve even on error to continue
+                        );
                     });
-
-                } catch (e) {
-                    console.warn(`Texture load failed for ${texFile.name}:`, e);
-                    textureDataURL = null;
-                }
+                } catch (e) { console.warn("Tex Error", e); }
             }
 
-            // 5. Load OBJ File (Geometry)
+            // 5. Parse OBJ (Logic from v2.7.1)
             displayStatusMessage(strings.loading(fileName), 'info', 0);
-            
-            const objContent = await fetchGoogleDriveFileContent(objFile, 'text');
             const loader = new OBJLoader();
             
-            // Inisialisasi MTL Loader jika ada konten MTL
-            if (mtlContent && mtlName) {
-                try {
-                    const mtlLoader = new MTLLoader();
-                    // Karena kita fetch konten MTL secara manual, kita perlu mengeset path
-                    // Ini penting agar MTL Loader tahu di mana mencari tekstur (walaupun kita tidak menggunakannya)
-                    const materials = mtlLoader.parse(mtlContent);
-                    materials.preload();
-                    loader.setMaterials(materials);
-                    originalMaterials = materials; // Simpan untuk referensi
-                } catch(e) {
-                    console.warn("MTL Parsing Error. Proceeding without MTL.", e);
-                    originalMaterials = null;
-                }
+            // Set materials jika ada MTL dan belum ada custom texture
+            if (originalMaterials && !customTexturedMaterial) {
+                loader.setMaterials(originalMaterials);
             }
 
-
-            // Parse OBJ content
             loadedObject = loader.parse(objContent);
 
-            // 6. Atur posisi, rotasi, dan skala
+            // Centering
             const box = new THREE.Box3().setFromObject(loadedObject);
             const size = box.getSize(new THREE.Vector3());
             const center = box.getCenter(new THREE.Vector3());
-
-            // Normalisasi skala
             const maxDim = Math.max(size.x, size.y, size.z);
-            const scaleFactor = 8 / maxDim; // Skala menjadi ukuran maksimum 8 unit
+            const scaleFactor = 8 / maxDim; 
             
-            // Atur pivot ke pusat bounding box (di tengah objek)
             loadedObject.position.set(-center.x * scaleFactor, -center.y * scaleFactor, -center.z * scaleFactor);
             loadedObject.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
-            // Terapkan material default (Normal) atau MTL jika ada
-            loadedObject.traverse(function (child) {
+            // LOGIKA PENTING v2.7.1: Simpan Material Original
+            loadedObject.traverse((child) => {
                 if (child.isMesh) {
-                    if (originalMaterials) {
-                         // Jika MTL ada, biarkan OBJLoader yang menangani material di sini
-                         // Jika tidak, terapkan material default (Normal)
-                         child.material = normalMaterial.clone(); 
+                    if (customTexturedMaterial) {
+                        child.originalMaterial = customTexturedMaterial; // Prioritas 1: PNG
+                    } else if (originalMaterials) {
+                        child.originalMaterial = child.material; // Prioritas 2: MTL
                     } else {
-                        child.material = normalMaterial.clone();
+                        child.originalMaterial = shadedMaterial.clone(); // Prioritas 3: Shaded
                     }
                 }
             });
 
-            // Tambahkan ke scene
             scene.add(loadedObject);
-
-            // Simpan metadata ke objek yang dimuat untuk digunakan oleh updateDescription
             loadedObject.name = fileName;
             loadedObject.descriptionText = descriptionText;
-            loadedObject.textureDataURL = textureDataURL; // Simpan URL tekstur untuk referensi UI
+            loadedObject.textureDataURL = textureDataURL;
+
+            // Reset UI
+            viewModeSelect.value = 'detail';
+            wireframeSelect.value = 'solid';
             
-            // 7. Perbarui UI: Deskripsi dan Tampilan
+            // Terapkan material awal (Detail mode)
+            updateObjectMaterial(true);
             updateDescription(loadedObject, fileName, descriptionText, null, textureDataURL);
-            updateObjectMaterial(); // Terapkan mode tampilan default (Normal/Detail)
         }
 
-        // --- Fungsi: Mengubah Material Objek ---
-        function updateObjectMaterial() {
-            if (!loadedObject) {
-                displayStatusMessage(UI_STRINGS[currentLang].noModelLoaded, 'warn', 3000);
-                return;
-            }
-
-            const viewMode = document.getElementById('view-mode-select').value;
-            const wireframeMode = document.getElementById('wireframe-select').value;
+        // --- UPDATE MATERIAL FUNCTION (LOGIKA v2.7.1) ---
+        function updateObjectMaterial(forceStatusUpdate = false) {
             const strings = UI_STRINGS[currentLang];
-
-            // 1. Tentukan Wireframe State
-            isWireframe = (wireframeMode === 'wireframe');
             
-            // 2. Tentukan Base Material
-            let newBaseMaterial;
-            let statusMsg;
-            let forceShaded = false;
+            if (!loadedObject) return;
 
-            switch (viewMode) {
-                case 'detail':
-                    newBaseMaterial = normalMaterial;
-                    statusMsg = strings.detailModeApplied;
-                    // Pastikan lighting dimatikan untuk normal material
-                    directionalLight.visible = false; 
-                    ambientLight.intensity = 0.9;
-                    break;
-                case 'shaded':
-                    newBaseMaterial = shadedMaterial;
-                    statusMsg = strings.shadedModeApplied;
-                    // Aktifkan lighting untuk material standar
-                    directionalLight.visible = true; 
-                    ambientLight.intensity = 0.5;
-                    break;
-                case 'original':
-                    if (originalMaterials) {
-                        newBaseMaterial = originalMaterials;
-                        statusMsg = strings.originalMtlApplied;
-                        directionalLight.visible = true;
-                        ambientLight.intensity = 0.5;
-                    } else if (customTexturedMaterial) {
-                         // Menggunakan Custom Texture jika tidak ada MTL tapi ada TEX
-                        newBaseMaterial = customTexturedMaterial;
-                        statusMsg = strings.originalTextureApplied;
-                        directionalLight.visible = true;
-                        ambientLight.intensity = 0.5;
-                    } else {
-                        // Fallback ke Shaded jika tidak ada MTL atau Tekstur
-                        newBaseMaterial = shadedMaterial;
-                        statusMsg = strings.warningNoMtlTex;
-                        forceShaded = true;
-                        directionalLight.visible = true;
-                        ambientLight.intensity = 0.5;
-                    }
-                    break;
-                default:
-                    newBaseMaterial = normalMaterial;
-                    statusMsg = strings.detailModeApplied;
-                    directionalLight.visible = false;
-                    ambientLight.intensity = 0.9;
+            const baseStyle = viewModeSelect.value;
+            const wireframeStyle = wireframeSelect.value;
+            isWireframe = (wireframeStyle === 'wireframe');
+
+            let targetMaterial = null;
+
+            if (baseStyle === 'detail') {
+                targetMaterial = normalMaterial;
+                directionalLight.visible = false;
+                if (forceStatusUpdate) displayStatusMessage(strings.detailModeApplied, 'info', 2000);
+            
+            } else if (baseStyle === 'shaded') {
+                targetMaterial = shadedMaterial;
+                directionalLight.visible = true;
+                if (forceStatusUpdate) displayStatusMessage(strings.shadedModeApplied, 'info', 2000);
+            
+            } else if (baseStyle === 'original') {
+                directionalLight.visible = true;
+                
+                if (customTexturedMaterial) {
+                    if (forceStatusUpdate) displayStatusMessage(strings.originalTextureApplied, 'info');
+                } else if (originalMaterials) {
+                    if (forceStatusUpdate) displayStatusMessage(strings.originalMtlApplied, 'info');
+                } else {
+                    console.warn("No MTL/Texture. Fallback to Shaded.");
+                    viewModeSelect.value = 'shaded';
+                    targetMaterial = shadedMaterial;
+                    if (forceStatusUpdate) displayStatusMessage(strings.warningNoMtlTex, 'warn');
+                }
             }
-
-            // Jika dipaksa ke shaded, ubah dropdown untuk mencerminkan status
-            if (forceShaded) {
-                document.getElementById('view-mode-select').value = 'shaded';
-                displayStatusMessage(statusMsg, 'warn', 5000);
-            } else {
-                displayStatusMessage(statusMsg, 'info', 3000);
-            }
-
-            // 3. Terapkan Material dan Wireframe ke Objek
-            loadedObject.traverse(function (child) {
+            
+            loadedObject.traverse((child) => {
                 if (child.isMesh) {
-                    if (newBaseMaterial.isMaterial) {
-                         // Mode selain MTL (Normal, Shaded, Textured)
-                         // Kloning material agar wireframe/color bisa disetel per-mesh jika perlu (tapi kita setel di sini)
-                        const materialToApply = newBaseMaterial.clone(); 
-                        materialToApply.wireframe = isWireframe;
-                        child.material = materialToApply;
-                    } else if (newBaseMaterial instanceof THREE.MTLLoader.MaterialCreator) {
-                         // Mode MTL. MTL MaterialCreator sudah menangani semua material secara otomatis
-                         // Kita hanya perlu memastikan setiap mesh memiliki material yang benar dari MTL
-                        const meshMaterial = child.material.clone();
-                        // Perbarui properti wireframe tanpa mengganggu data MTL
-                        if (!Array.isArray(meshMaterial)) {
-                            meshMaterial.wireframe = isWireframe;
-                        } else {
-                            meshMaterial.forEach(m => m.wireframe = isWireframe);
-                        }
-                        child.material = meshMaterial; // Terkadang diperlukan re-assign
+                    if (baseStyle === 'original' && (customTexturedMaterial || originalMaterials)) {
+                        // Restore Original
+                        child.material = child.originalMaterial; 
+                        
+                        const materialsToUpdate = Array.isArray(child.material) ? child.material : [child.material];
+                        materialsToUpdate.forEach(m => {
+                            if (m) { 
+                                m.wireframe = isWireframe;
+                                m.needsUpdate = true; 
+                            }
+                        });
+                        
+                    } else if (targetMaterial) {
+                        // Apply Fallback/Override
+                        child.material = targetMaterial;
+                        targetMaterial.wireframe = isWireframe;
+                        targetMaterial.needsUpdate = true;
                     }
                 }
             });
-            
-            // Simpan base material yang aktif (untuk referensi, tidak digunakan untuk traverser)
-            currentBaseMaterial = newBaseMaterial; 
         }
 
-        /**
-         * Memperbarui kotak deskripsi dengan statistik objek dan teks pendamping.
-         * @param {THREE.Object3D} obj Objek Three.js yang dimuat.
-         * @param {string} fileName Nama file OBJ.
-         * @param {string} descriptionText Konten dari file TXT pendamping.
-         * @param {string|null} errorMsg Pesan error jika ada.
-         * @param {string|null} textureDataURL Data URL tekstur kustom.
-         */
         function updateDescription(obj, fileName, descriptionText, errorMsg = null, textureDataURL = null) {
             const strings = UI_STRINGS[currentLang];
             
             if (errorMsg) {
                 descriptionEl.textContent = `*** ERROR ***\n\n${errorMsg}`;
-                descriptionEl.classList.remove('text-gray-300');
                 descriptionEl.classList.add('text-red-400');
                 return;
             }
@@ -923,32 +682,19 @@ Silakan muat file .obj dari daftar di kiri.
             descriptionEl.classList.remove('text-red-400');
             descriptionEl.classList.add('text-gray-300');
             
-            let meshCount = 0;
-            let vertexCount = 0;
-            let faceCount = 0;
-
+            let meshCount = 0, vertexCount = 0, faceCount = 0;
             obj.traverse(function (child) {
                 if (child.isMesh) {
                     meshCount++;
                     const geo = child.geometry;
-                    // Hitung vertices
-                    if (geo.attributes.position) {
-                        vertexCount += geo.attributes.position.count;
-                    }
-                    // Hitung triangles/faces (Indeks lebih akurat jika ada)
-                    if (geo.index) {
-                        faceCount += geo.index.count / 3;
-                    } else if (geo.attributes.position) {
-                        faceCount += geo.attributes.position.count / 3;
-                    }
+                    if (geo.attributes.position) vertexCount += geo.attributes.position.count;
+                    if (geo.index) faceCount += geo.index.count / 3;
+                    else if (geo.attributes.position) faceCount += geo.attributes.position.count / 3;
                 }
             });
 
-            // Status MTL dan Tekstur
-            const mtlStatus = originalMaterials ? strings.statusYesMtl : strings.statusNoMtl;
-            // Periksa loadedObject.textureDataURL, bukan customTexture yang bisa jadi null karena gagal load THREE.js
-            const texStatus = textureDataURL ? strings.statusYesTex : strings.statusNoTex; 
-
+            const mtlStatus = originalMaterials ? (strings.statusYesMtl) : (strings.statusNoMtl);
+            const texStatus = textureDataURL ? (strings.statusYesTex) : (strings.statusNoTex);
 
             let stats = `\
 ${strings.fieldName}:        ${fileName}
@@ -959,18 +705,13 @@ ${strings.fieldMtlLoaded}:  ${mtlStatus}
 ${strings.fieldTexLoaded}:   ${texStatus}
 ---
 `;
-            
-            // Tambahkan deskripsi dari file TXT jika ada
             if (descriptionText && descriptionText !== strings.descPlaceholder) {
                 stats += `\n${descriptionText}\n`;
             }
-
             descriptionEl.textContent = stats.trim();
         }
 
-        // --- Start the app ---
         window.onload = init;
     </script>
-
 </body>
 </html>
